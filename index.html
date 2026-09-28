@@ -19,7 +19,10 @@
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   background:var(--bg);color:var(--text);padding:32px 16px 80px;transition:background .2s,color .2s;}
 .shell{display:flex;align-items:flex-start;gap:22px;max-width:1420px;margin:0 auto;}
-.nav-rail{width:186px;flex:none;position:sticky;top:32px;display:flex;flex-direction:column;gap:4px;}
+.nav-rail{width:186px;flex:none;position:sticky;top:32px;display:flex;flex-direction:column;gap:4px;
+  height:calc(100vh - 56px);box-sizing:border-box;}
+.nav-rail-actions{margin-top:auto;padding-top:12px;display:flex;flex-direction:column;gap:6px;}
+.nav-rail-actions .theme-toggle,.nav-rail-actions .support-btn{width:100%;}
 .nav-rail-title{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
   color:var(--muted);padding:0 10px 6px;}
 .nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--radius);
@@ -31,10 +34,12 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Hel
 .pane{flex:1;min-width:0;}
 @media (max-width:900px){
   .shell{flex-direction:column;gap:16px;}
-  .nav-rail{position:static;width:100%;flex-direction:row;align-items:center;gap:6px;
+  .nav-rail{position:static;width:100%;height:auto;flex-direction:row;align-items:center;gap:6px;
     border-bottom:1px solid var(--border);padding-bottom:10px;}
   .nav-rail-title{display:none;}
   .nav-item{width:auto;}
+  .nav-rail-actions{margin-top:0;margin-left:auto;padding-top:0;flex-direction:row;align-items:center;}
+  .nav-rail-actions .theme-toggle,.nav-rail-actions .support-btn{width:auto;}
 }
 .wrap{max-width:800px;margin:0 auto;}
 header{display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap;}
@@ -48,17 +53,17 @@ h1 .thin{font-weight:400;color:var(--muted);letter-spacing:0;}
   background:var(--card);white-space:nowrap;}
 .theme-toggle{border:1px solid var(--border);background:var(--card);color:var(--text);
   border-radius:20px;padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer;
-  display:flex;align-items:center;gap:6px;transition:border-color .15s;}
+  display:flex;align-items:center;justify-content:center;gap:6px;transition:border-color .15s;}
 .theme-toggle:hover{border-color:var(--accent);}
 .format-toggle{margin-left:auto;border:1px solid var(--border);background:var(--card);color:var(--text);
   border-radius:20px;padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer;
   display:flex;align-items:center;gap:6px;transition:border-color .15s,background .15s;}
 .format-toggle:hover{border-color:var(--accent);}
 .format-toggle.singles-active{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;border-color:#6d28d9;}
-.support-btn{margin-left:auto;border:1px solid var(--border);background:var(--card);color:var(--text);
+.support-btn{border:1px solid var(--border);background:var(--card);color:var(--text);
   border-radius:20px;padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer;
-  display:flex;align-items:center;gap:6px;transition:border-color .15s,transform .08s,box-shadow .15s;
-  text-decoration:none;margin-right:8px;}
+  display:flex;align-items:center;justify-content:center;gap:6px;transition:border-color .15s,transform .08s,box-shadow .15s;
+  text-decoration:none;}
 .support-btn:hover{border-color:#ff5e5b;box-shadow:0 4px 14px rgba(255,94,91,.28);transform:translateY(-1px);}
 .support-btn:active{transform:translateY(0);}
 .subtitle{color:var(--muted);font-size:14px;margin:8px 0 26px;}
@@ -290,6 +295,8 @@ h2{font-size:16px;margin:30px 0 4px;font-weight:600;}
 footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center;line-height:1.7;}
 .footer-brand{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;font-size:13px;font-weight:600;}
 .footer-logo{width:20px;height:20px;flex:none;}
+.legal{margin:16px auto 0;max-width:760px;font-size:10.5px;line-height:1.65;color:var(--muted);opacity:.85;
+  padding-top:14px;border-top:1px solid var(--border);}
 
 /* ── Page layout with sidebar ── */
 .page-layout{display:flex;gap:22px;align-items:flex-start;justify-content:center;max-width:1140px;margin:0 auto;}
@@ -338,6 +345,48 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center;line-
 .ohko-chip.immune{background:#3b82f6;}
 .ohko-dmg{font-size:10px;color:var(--muted);white-space:nowrap;}
 .battle-disclaimer{font-size:10.5px;color:var(--muted);margin-top:12px;line-height:1.4;padding-top:10px;border-top:1px solid var(--border);}
+
+/* Support modal */
+.support-modal{position:fixed;inset:0;z-index:1200;display:flex;align-items:center;justify-content:center;
+  padding:20px;background:rgba(0,0,0,.55);backdrop-filter:blur(2px);}
+.support-modal.hidden{display:none;}
+.support-card{background:var(--card);border:1px solid var(--border);border-radius:14px;width:100%;max-width:400px;
+  box-shadow:0 18px 48px var(--shadow);overflow:hidden;max-height:calc(100vh - 40px);display:flex;flex-direction:column;}
+.support-head{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:12px 14px;border-bottom:1px solid var(--border);flex:none;}
+.support-head h2{margin:0;font-size:14.5px;font-weight:700;}
+.support-close{border:none;background:transparent;color:var(--muted);font-size:20px;line-height:1;cursor:pointer;
+  padding:2px 6px;border-radius:6px;}
+.support-close:hover{background:var(--hover-bg);color:var(--text);}
+.support-tabs{display:flex;gap:4px;padding:10px 14px 0;flex:none;}
+.support-tab{flex:1;border:1px solid var(--border);background:var(--bg);color:var(--muted);
+  border-radius:8px 8px 0 0;padding:8px 6px;font-size:12.5px;font-weight:600;cursor:pointer;}
+.support-tab[aria-selected="true"]{background:var(--card);color:var(--text);
+  border-bottom-color:var(--card);position:relative;}
+.support-body{padding:14px;overflow-y:auto;}
+.support-panel[hidden]{display:none;}
+.support-pane-ko .support-ko-hero{text-align:center;margin:4px 0 14px;}
+.support-pane-ko .support-ko-mug{font-size:64px;line-height:1;}
+.support-pane-ko .support-ko-word{font-size:18px;font-weight:800;margin-top:2px;letter-spacing:.3px;}
+.support-pane-ko .support-desc{margin:0 0 12px;font-size:12.5px;color:var(--muted);line-height:1.5;}
+.support-pane-ko .support-ko-btn{display:block;text-align:center;background:var(--accent);color:#fff;
+  border-radius:10px;padding:11px 16px;font-size:13.5px;font-weight:700;text-decoration:none;}
+.support-pane-ko .support-ko-btn:hover{filter:brightness(1.08);}
+.pix-qr{display:block;width:190px;height:190px;margin:0 auto 14px;image-rendering:pixelated;
+  background:#fff;padding:8px;border:1px solid var(--border);border-radius:10px;}
+.pix-label{text-align:center;font-size:12px;color:var(--muted);margin:0 0 12px;}
+.pix-code-row{display:flex;gap:8px;align-items:stretch;}
+.pix-code{flex:1;min-width:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:10.5px;line-height:1.45;word-break:break-all;background:var(--bg);color:var(--text);
+  border:1px solid var(--border);border-radius:8px;padding:9px 10px;max-height:88px;overflow-y:auto;
+  -webkit-user-select:all;user-select:all;}
+.pix-copy{flex:none;border:1px solid var(--border);background:var(--card);color:var(--text);
+  border-radius:8px;padding:0 14px;font-size:12.5px;font-weight:600;cursor:pointer;}
+.pix-copy:hover{background:var(--hover-bg);}
+.pix-hint{margin:10px 0 0;font-size:11px;color:var(--muted);line-height:1.45;}
+@media (max-width:900px){
+  .support-card{max-width:100%;}
+}
 </style>
 </head>
 <body>
@@ -346,6 +395,10 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center;line-
   <div class="nav-rail-title">Tools</div>
   <button class="nav-item active" data-pane="paneHelper" type="button" aria-current="page"><span class="nav-ico">📊</span>VGC Helper</button>
   <button class="nav-item" data-pane="panePlanner" type="button"><span class="nav-ico">🧩</span>Team Planner</button>
+  <div class="nav-rail-actions">
+    <button class="theme-toggle" id="themeToggle" type="button">🌙 Dark</button>
+    <button class="support-btn" id="supportBtn" type="button" title="Support this free tool">☕ Support me!</button>
+  </div>
 </nav>
 
 <div class="pane" id="paneHelper">
@@ -372,11 +425,9 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center;line-
       <h1><span class="wordmark">VGC Helper</span><span class="thin">· Type Advantages</span></h1>
       <span class="brand-tag">Reg M-C</span>
     </div>
-    <a class="support-btn" href="https://ko-fi.com/waivecate" target="_blank" rel="noopener noreferrer" title="Buy me a coffee on Ko-fi — it keeps this tool free">☕ Support me!</a>
     <button class="format-toggle" id="battleFormatToggle">⚔️ Doubles</button>
-    <button class="theme-toggle" id="themeToggle">🌙 Dark</button>
   </header>
-  <p class="subtitle">Your competitive battle companion — type matchups, spreadsheets, and OHKO checks for Reg M-C. Hover the type chart for quick matchups. Search a Pokémon for its full breakdown. Drag types into the dual-type checker below — and drag a Pokémon's sprite into the Battle Box to check OHKO threats.</p>
+  <p class="subtitle">Your companion app for type matchups, meta battle simulations, type advantage check and team planning for VGC Pokémon Champions. Drag types into the dual-type checker below or drag a Pokémon's sprite into the Battle Box to check OHKO threats.</p>
 
   <div class="search-section">
     <input type="text" id="pokemonSearch" placeholder="Search a Pokémon, e.g. Charizard" autocomplete="off">
@@ -412,7 +463,8 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center;line-
     <div id="dualResult" class="hidden"></div>
   </div>
 
-  <footer><div class="footer-brand"><svg viewBox="0 0 48 48" class="footer-logo" aria-hidden="true"><path d="M24 2 43 9v17c0 10-8 17.5-19 20C13 43.5 5 36 5 26V9Z" fill="var(--accent)"/><path d="M13.5 15.5 24 34.5 34.5 15.5h-6.4L24 25.2l-4.1-9.7Z" fill="#fff"/><circle cx="24" cy="14.5" r="3.4" fill="#fff"/></svg><span class="wordmark">VGC Helper</span></div>Type chart reflects current core-series mechanics (Fairy type included). Competitive sets are Pokémon Champions VGC 2026 data from Pikalytics — Regulation M-C (current), M-B and M-A. M-C publishes usage percentages; M-B is listed by Pikalytics rank. EV spreads and natures are the most common community set for each species, aggregated from the VGCPastes tournament-team archive. Only species with meaningful usage are covered.</footer>
+  <footer><div class="footer-brand"><svg viewBox="0 0 48 48" class="footer-logo" aria-hidden="true"><path d="M24 2 43 9v17c0 10-8 17.5-19 20C13 43.5 5 36 5 26V9Z" fill="var(--accent)"/><path d="M13.5 15.5 24 34.5 34.5 15.5h-6.4L24 25.2l-4.1-9.7Z" fill="#fff"/><circle cx="24" cy="14.5" r="3.4" fill="#fff"/></svg><span class="wordmark">VGC Helper</span></div>Type chart reflects current core-series mechanics (Fairy type included). Competitive sets are Pokémon Champions VGC 2026 data from Pikalytics — Regulation M-C (current), M-B and M-A. M-C publishes usage percentages; M-B is listed by Pikalytics rank. EV spreads and natures are the most common community set for each species, aggregated from the VGCPastes tournament-team archive. Only species with meaningful usage are covered.
+<p class="legal">Pokémon, Pokémon GO, the Pokémon logo and all related names and marks are trademarks of Nintendo, Creatures Inc. and GAME FREAK Inc. This is an unofficial, non-commercial, fan-made tool that is not affiliated with, endorsed by, sponsored by or approved by Nintendo, Creatures Inc., GAME FREAK Inc. or The Pokémon Company. All game data, sprites and type chart references are the property of their respective owners and are used here for identification and informational purposes only. No copyright infringement is intended. Competitive usage data is sourced from Pikalytics.</p>
 </div>
 
 <aside class="battle-sidebar">
@@ -426,7 +478,6 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center;line-
 </aside>
 </div>
 </div>
-</div>
 
 <div class="pane hidden" id="panePlanner">
   <div class="wrap">
@@ -438,6 +489,39 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center;line-
     </div>
     <div id="plannerTeam"></div>
     <div id="plannerResults"></div>
+  </div>
+</div>
+</div>
+
+<div class="support-modal hidden" id="supportModal" role="dialog" aria-modal="true" aria-labelledby="supportTitle">
+  <div class="support-card">
+    <div class="support-head">
+      <h2 id="supportTitle">☕ Support this tool</h2>
+      <button class="support-close" id="supportClose" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div class="support-tabs" role="tablist">
+      <button class="support-tab" id="tabKofi" type="button" role="tab" aria-selected="true" aria-controls="panelKofi">☕ Ko-fi</button>
+      <button class="support-tab" id="tabPix" type="button" role="tab" aria-selected="false" aria-controls="panelPix">🇧🇷 PIX (Brasil)</button>
+    </div>
+    <div class="support-body">
+      <div class="support-panel support-pane-ko" id="panelKofi" role="tabpanel" aria-labelledby="tabKofi">
+        <div class="support-ko-hero">
+          <div class="support-ko-mug" aria-hidden="true">&#9749;</div>
+          <div class="support-ko-word">Ko-fi</div>
+        </div>
+        <p class="support-desc">VGC Helper is open-source and free, so if you like this tool and would like to help me financially keep on creating stuff like this in the future I would be very grateful!</p>
+        <a class="support-ko-btn" href="https://ko-fi.com/waivecate" target="_blank" rel="noopener noreferrer">Buy me a coffee on Ko-fi</a>
+      </div>
+      <div class="support-panel support-pane-pix" id="panelPix" role="tabpanel" aria-labelledby="tabPix" hidden>
+        <img class="pix-qr" id="pixQr" alt="PIX QR code for Caio Mattos Klein" width="190" height="190" src="data:image/png;base64,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">
+        <p class="pix-label">PIX Copia e Cola · Caio Mattos Klein</p>
+        <div class="pix-code-row">
+          <div class="pix-code" id="pixCode" tabindex="0">00020126330014br.gov.bcb.pix0111417827758895204000053039865802BR5917CAIO MATTOS KLEIN6009Sao Paulo62290525REC6AB8DC43546CD60565662963043ED8</div>
+          <button class="pix-copy" id="pixCopy" type="button">Copy</button>
+        </div>
+        <p class="pix-hint">No app needed — in your bank app choose PIX &rsaquo; Pix Copia e Cola and paste the code above.</p>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2200,6 +2284,64 @@ async function toggleTheme(){
 }
 document.getElementById("themeToggle").addEventListener("click",toggleTheme);
 loadTheme();
+
+/* ─── Support Modal (Ko-fi / PIX) ─── */
+(()=>{
+  const modal=document.getElementById("supportModal");
+  if(!modal) return;
+  let lastFocus=null;
+  const open=()=>{
+    lastFocus=document.activeElement;
+    modal.classList.remove("hidden");
+    document.getElementById("tabKofi").focus();
+  };
+  const close=()=>{
+    modal.classList.add("hidden");
+    if(lastFocus) lastFocus.focus();
+  };
+  document.getElementById("supportBtn").addEventListener("click",open);
+  document.getElementById("supportClose").addEventListener("click",close);
+  modal.addEventListener("click",e=>{if(e.target===modal) close();});
+  document.addEventListener("keydown",e=>{
+    if(modal.classList.contains("hidden")) return;
+    if(e.key==="Escape"){close();return;}
+    if(e.key==="Tab"){
+      const f=modal.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])');
+      if(!f.length) return;
+      const first=f[0], last=f[f.length-1];
+      if(e.shiftKey && document.activeElement===first){e.preventDefault();last.focus();}
+      else if(!e.shiftKey && document.activeElement===last){e.preventDefault();first.focus();}
+    }
+  });
+  const tabs=[["tabKofi","panelKofi"],["tabPix","panelPix"]];
+  const select=id=>{
+    tabs.forEach(([t,p])=>{
+      const on=t===id;
+      document.getElementById(t).setAttribute("aria-selected",on?"true":"false");
+      document.getElementById(p).hidden=!on;
+    });
+  };
+  tabs.forEach(([t])=>document.getElementById(t).addEventListener("click",()=>select(t)));
+
+  const codeEl=document.getElementById("pixCode");
+  const copyBtn=document.getElementById("pixCopy");
+  const copy=async()=>{
+    const code=codeEl.textContent.trim();
+    try{ await navigator.clipboard.writeText(code); }
+    catch(e){
+      const ta=document.createElement("textarea");
+      ta.value=code;ta.style.position="fixed";ta.style.opacity="0";
+      document.body.appendChild(ta);ta.select();
+      try{document.execCommand("copy");}catch(_){}
+      ta.remove();
+    }
+    const old=copyBtn.textContent;
+    copyBtn.textContent="Copied";
+    setTimeout(()=>{copyBtn.textContent=old;},1400);
+  };
+  copyBtn.addEventListener("click",copy);
+  codeEl.addEventListener("click",copy);
+})();
 
 /* ─── Battle Format (Singles/Doubles) ─── */
 function applyBattleFormat(fmt){
