@@ -754,6 +754,16 @@ function statWithEVNature(base,ev,natureName,key,scale){
   if(nat){ if(nat.boost===key) raw=Math.floor(raw*1.1); else if(nat.cut===key) raw=Math.floor(raw*0.9); }
   return raw;
 }
+/* The VGC Helper stat grid always shows BASE stats (see calcBase above). A nature
+   preview therefore applies the +10%/-10% straight to the base value — no level-50
+   conversion, no EV contribution, nothing else folded in. */
+function applyNatureToBase(base,natureName,key){
+  const nat=NATURE_MOD[natureName];
+  if(!nat) return base;
+  if(nat.boost===key) return Math.floor(base*1.1);
+  if(nat.cut===key) return Math.floor(base*0.9);
+  return base;
+}
 function fullBattleStats(p,comp){
   if(comp&&comp.evs){
     const ev=comp.evs.spread,nat=comp.evs.nature,sc=comp.evs.scale||"classic";
@@ -2212,9 +2222,24 @@ function renderResult(p){
   renderCompAndStats(p, lvl, availFormats, activeKey);
 }
 
-function renderCompAndStats(p, lvl, availFormats, activeKey){
+/* Renders only the six stat boxes. previewNature=null shows plain base stats;
+   passing a nature applies its +10%/-10% to the base value and nothing else, so a
+   hover re-renders this function alone and never disturbs the hovered element. */
+function renderStatGrid(p,lvl,evStats,zeroEv,previewNature){
   const SLABS=["HP","Atk","Def","SpA","SpD","Spe"];
-  const statKeys=Object.keys(lvl);
+  const statKeys=["hp","atk","def","spa","spd","spe"];
+  const statGrid=document.getElementById("statGrid");
+  if(!statGrid) return;
+  statGrid.innerHTML=SLABS.map((lb,i)=>{
+    const key=statKeys[i],base=lvl[key];
+    const shown=previewNature?applyNatureToBase(base,previewNature,key):base;
+    let evLine="";
+    if(evStats){const diff=evStats[i]-zeroEv[key];if(diff>0)evLine=`<div class="stat-ev">+${diff}</div>`;}
+    return`<div class="stat-box"><div class="stat-label">${lb}</div><div class="stat-value">${shown}</div>${evLine}</div>`;
+  }).join("");
+}
+
+function renderCompAndStats(p, lvl, availFormats, activeKey){
   const active=availFormats.find(f=>f.key===activeKey);
   const comp=active?active.data[formRoot(p.n)]:null;
 
@@ -2226,13 +2251,7 @@ function renderCompAndStats(p, lvl, availFormats, activeKey){
   // grid now displays. Subtracting the base instead would report the whole
   // level-50 conversion as an "EV boost" (e.g. +75 on a 155-HP base of 80).
   const zeroEv=calcL50(p.s);
-  const statGrid=document.getElementById("statGrid");
-  statGrid.innerHTML=SLABS.map((lb,i)=>{
-    const base=lvl[statKeys[i]];
-    let evLine="";
-    if(evStats){const diff=evStats[i]-zeroEv[statKeys[i]];if(diff>0)evLine=`<div class="stat-ev">+${diff}</div>`;}
-    return`<div class="stat-box"><div class="stat-label">${lb}</div><div class="stat-value">${base}</div>${evLine}</div>`;
-  }).join("");
+  renderStatGrid(p,lvl,evStats,zeroEv,null);
 
   const compSection=document.getElementById("compSection");
   if(!availFormats.length){
@@ -2265,7 +2284,7 @@ function renderCompAndStats(p, lvl, availFormats, activeKey){
         <div class="set-label">4 ${labelWord.toLowerCase()} moves</div>
         <div class="chip-row" style="margin-top:5px">${comp.moves.map(m=>moveBadge(m)).join("")}</div>
       </div>
-      ${comp.evs?`<div class="ev-label">${isReal?"Common":labelWord} EV spread: <strong>${comp.evs.nature}</strong> — ${comp.evs.label}</div>`:""}
+      ${comp.evs?`<div class="ev-label">${isReal?"Common":labelWord} EV spread: <strong class="info-hoverable ev-nature" data-nature="${comp.evs.nature}">${comp.evs.nature}</strong> — ${comp.evs.label}</div>`:""}
       ${comp.reasoning?`<div class="reasoning-box">${comp.reasoning}</div>`:""}
     `;
   }else{
@@ -2275,6 +2294,11 @@ function renderCompAndStats(p, lvl, availFormats, activeKey){
   compSection.innerHTML=`<h3>Competitive set</h3>${tabsHtml}${body}`;
   compSection.querySelectorAll(".format-tab").forEach(btn=>{
     btn.addEventListener("click",()=>renderCompAndStats(p, lvl, availFormats, btn.dataset.fmt));
+  });
+  compSection.querySelectorAll(".ev-nature").forEach(el=>{
+    const nat=el.dataset.nature;
+    el.addEventListener("mouseenter",()=>renderStatGrid(p,lvl,evStats,zeroEv,nat));
+    el.addEventListener("mouseleave",()=>renderStatGrid(p,lvl,evStats,zeroEv,null));
   });
 }
 
