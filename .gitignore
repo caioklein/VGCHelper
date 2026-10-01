@@ -1,0 +1,8 @@
+
+# scratch files from the MetaVGC EV rebuild (2026-09-30)
+index.html.bak_*
+*.bak_task*
+
+# agent working files - never commit these
+docs/
+.superpowers/
